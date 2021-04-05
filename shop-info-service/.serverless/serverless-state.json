@@ -7,6 +7,7 @@
     "provider": {
       "name": "aws",
       "runtime": "nodejs14.x",
+      "lambdaHashingVersion": "20201221",
       "region": "eu-west-1",
       "stage": "dev",
       "apiGateway": {
@@ -16,7 +17,6 @@
       "environment": {
         "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
       },
-      "lambdaHashingVersion": "20201221",
       "variableSyntax": "\\${([^{}:]+?(?:\\(|:)(?:[^:{}][^{}]*?)?)}",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -90,12 +90,6 @@
                   }
                 ]
               }
-            }
-          },
-          "HelloLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
-            "Properties": {
-              "LogGroupName": "/aws/lambda/shop-info-service-dev-hello"
             }
           },
           "GetShopInfoLogGroup": {
@@ -187,35 +181,57 @@
               }
             }
           },
-          "HelloLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
+          "EnterpriseLogAccessIamRole": {
+            "Type": "AWS::IAM::Role",
             "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/shop-info-service/dev/1617377191099-2021-04-02T15:26:31.099Z/shop-info-service.zip"
-              },
-              "Handler": "src/functions/hello/handler.main",
-              "Runtime": "nodejs14.x",
-              "FunctionName": "shop-info-service-dev-hello",
-              "MemorySize": 1024,
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
-                }
-              },
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "arn:aws:iam::802587217904:root"
+                    },
+                    "Action": "sts:AssumeRole",
+                    "Condition": {
+                      "StringEquals": {
+                        "sts:ExternalId": "ServerlessEnterprise-b3da5a36-6209-4216-aaa8-e35b3c1d6eac"
+                      }
+                    }
+                  }
                 ]
-              }
-            },
-            "DependsOn": [
-              "HelloLogGroup"
-            ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "LogFilterAccess",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:FilterLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::GetAtt": [
+                              "GetShopInfoLogGroup",
+                              "Arn"
+                            ]
+                          },
+                          {
+                            "Fn::GetAtt": [
+                              "GetShopAdminInfoLogGroup",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
           },
           "GetShopInfoLambdaFunction": {
             "Type": "AWS::Lambda::Function",
@@ -224,9 +240,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/shop-info-service/dev/1617377191099-2021-04-02T15:26:31.099Z/shop-info-service.zip"
+                "S3Key": "serverless/shop-info-service/dev/1617634673814-2021-04-05T14:57:53.814Z/shop-info-service.zip"
               },
-              "Handler": "handler.getShopInfo",
+              "Handler": "s_getShopInfo.handler",
               "Runtime": "nodejs14.x",
               "FunctionName": "shop-info-service-dev-getShopInfo",
               "MemorySize": 1024,
@@ -254,9 +270,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/shop-info-service/dev/1617377191099-2021-04-02T15:26:31.099Z/shop-info-service.zip"
+                "S3Key": "serverless/shop-info-service/dev/1617634673814-2021-04-05T14:57:53.814Z/shop-info-service.zip"
               },
-              "Handler": "handler.getShopAdminInfo",
+              "Handler": "s_getShopAdminInfo.handler",
               "Runtime": "nodejs14.x",
               "FunctionName": "shop-info-service-dev-getShopAdminInfo",
               "MemorySize": 1024,
@@ -277,34 +293,24 @@
               "GetShopAdminInfoLogGroup"
             ]
           },
-          "HelloLambdaVersionEYGUrqAoEw0rdu5puwIleMnyzu5hdX0pKd6ZbJYHVw8": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "HelloLambdaFunction"
-              },
-              "CodeSha256": "ibWFzG5+f+EHNrjtEL4a/97JEGc6GfKncUAEwWMUqnY="
-            }
-          },
-          "GetShopInfoLambdaVersionvanvhqRapBI8cGxgVM7GcZAlNjpAfwanRwNwAi3hss4": {
+          "GetShopInfoLambdaVersionc7uRvEwMrsK9seitO36zEctawoGFnbUUV711Xqsww": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetShopInfoLambdaFunction"
               },
-              "CodeSha256": "ibWFzG5+f+EHNrjtEL4a/97JEGc6GfKncUAEwWMUqnY="
+              "CodeSha256": "K7efnnhswd60M3K6hAv7YxuzNBwmI0O5LGeBiXDsTf8="
             }
           },
-          "GetShopAdminInfoLambdaVersionLIc5ujAckmS1WXE3IQl5bwaSw313CTSKYH40kdc4": {
+          "GetShopAdminInfoLambdaVersionW0C31yS22pKZfLfIsYTDzRUCNpBiA9MOhkO3g3Y": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetShopAdminInfoLambdaFunction"
               },
-              "CodeSha256": "ibWFzG5+f+EHNrjtEL4a/97JEGc6GfKncUAEwWMUqnY="
+              "CodeSha256": "K7efnnhswd60M3K6hAv7YxuzNBwmI0O5LGeBiXDsTf8="
             }
           },
           "ApiGatewayRestApi": {
@@ -318,21 +324,6 @@
               },
               "Policy": "",
               "MinimumCompressionSize": 1024
-            }
-          },
-          "ApiGatewayResourceHello": {
-            "Type": "AWS::ApiGateway::Resource",
-            "Properties": {
-              "ParentId": {
-                "Fn::GetAtt": [
-                  "ApiGatewayRestApi",
-                  "RootResourceId"
-                ]
-              },
-              "PathPart": "hello",
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
             }
           },
           "ApiGatewayResourceShopDashinfo": {
@@ -365,54 +356,93 @@
               }
             }
           },
-          "ApiGatewayMethodHelloPost": {
+          "ApiGatewayMethodShopDashinfoOptions": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
-              "HttpMethod": "POST",
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
               "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
+              },
               "ResourceId": {
-                "Ref": "ApiGatewayResourceHello"
+                "Ref": "ApiGatewayResourceShopDashinfo"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
+              }
+            }
+          },
+          "ApiGatewayMethodShopDashadminDashinfoOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
               "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
               "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "HelloLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
               },
-              "MethodResponses": [],
-              "RequestValidatorId": {
-                "Ref": "ApiGatewayHelloModelValidator"
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceShopDashadminDashinfo"
               },
-              "RequestModels": {
-                "application/json": {
-                  "Ref": "ApiGatewayMethodHelloPostApplicationJsonModel"
-                }
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
               }
             }
           },
@@ -502,37 +532,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayMethodHelloPostApplicationJsonModel": {
-            "Type": "AWS::ApiGateway::Model",
-            "Properties": {
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ContentType": "application/json",
-              "Schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "name"
-                ]
-              }
-            }
-          },
-          "ApiGatewayHelloModelValidator": {
-            "Type": "AWS::ApiGateway::RequestValidator",
-            "Properties": {
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ValidateRequestBody": true,
-              "ValidateRequestParameters": true
-            }
-          },
-          "ApiGatewayDeployment1617377174752": {
+          "ApiGatewayDeployment1617634655564": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -541,47 +541,11 @@
               "StageName": "dev"
             },
             "DependsOn": [
-              "ApiGatewayMethodHelloPost",
+              "ApiGatewayMethodShopDashinfoOptions",
+              "ApiGatewayMethodShopDashadminDashinfoOptions",
               "ApiGatewayMethodShopDashinfoGet",
               "ApiGatewayMethodShopDashadminDashinfoGet"
             ]
-          },
-          "HelloLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "HelloLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "apigateway.amazonaws.com",
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
           },
           "GetShopInfoLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
@@ -656,6 +620,163 @@
                 ]
               }
             }
+          },
+          "ApiGatewayLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/api-gateway/shop-info-service-dev"
+            }
+          },
+          "CustomApiGatewayAccountCloudWatchRole": {
+            "Type": "Custom::ApiGatewayAccountRole",
+            "Version": 1,
+            "Properties": {
+              "ServiceToken": {
+                "Fn::GetAtt": [
+                  "CustomDashresourceDashapigwDashcwDashroleLambdaFunction",
+                  "Arn"
+                ]
+              }
+            }
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "shop-info-service",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "iam:",
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              "role/*"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "iam:AttachRolePolicy",
+                          "iam:CreateRole",
+                          "iam:ListAttachedRolePolicies",
+                          "iam:PassRole"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "apigateway:*::/account"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "apigateway:GET",
+                          "apigateway:PATCH"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "CustomDashresourceDashapigwDashcwDashroleLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/shop-info-service/dev/1617634673814-2021-04-05T14:57:53.814Z/custom-resources.zip"
+              },
+              "FunctionName": "shop-info-service-dev-custom-resource-apigw-cw-role",
+              "Handler": "apiGatewayCloudWatchRole/handler.handler",
+              "MemorySize": 1024,
+              "Runtime": "nodejs12.x",
+              "Timeout": 180,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleCustomResourcesLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
+          },
+          "CloudWatchLogsSubscriptionFilterGetShopInfoLogGroup": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#shop-info-service#dev",
+              "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+              "LogGroupName": {
+                "Ref": "GetShopInfoLogGroup"
+              }
+            }
+          },
+          "CloudWatchLogsSubscriptionFilterGetShopAdminInfoLogGroup": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#shop-info-service#dev",
+              "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+              "LogGroupName": {
+                "Ref": "GetShopAdminInfoLogGroup"
+              }
+            }
+          },
+          "CloudWatchLogsSubscriptionFilterApiGatewayLogGroup": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#shop-info-service#dev",
+              "FilterPattern": "\"SLS_ACCESS_LOG\"",
+              "LogGroupName": {
+                "Ref": "ApiGatewayLogGroup"
+              }
+            }
           }
         },
         "Outputs": {
@@ -664,22 +785,24 @@
               "Ref": "ServerlessDeploymentBucket"
             }
           },
-          "HelloLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
+          "EnterpriseLogAccessIamRole": {
             "Value": {
-              "Ref": "HelloLambdaVersionEYGUrqAoEw0rdu5puwIleMnyzu5hdX0pKd6ZbJYHVw8"
+              "Fn::GetAtt": [
+                "EnterpriseLogAccessIamRole",
+                "Arn"
+              ]
             }
           },
           "GetShopInfoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetShopInfoLambdaVersionvanvhqRapBI8cGxgVM7GcZAlNjpAfwanRwNwAi3hss4"
+              "Ref": "GetShopInfoLambdaVersionc7uRvEwMrsK9seitO36zEctawoGFnbUUV711Xqsww"
             }
           },
           "GetShopAdminInfoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetShopAdminInfoLambdaVersionLIc5ujAckmS1WXE3IQl5bwaSw313CTSKYH40kdc4"
+              "Ref": "GetShopAdminInfoLambdaVersionW0C31yS22pKZfLfIsYTDzRUCNpBiA9MOhkO3g3Y"
             }
           },
           "ServiceEndpoint": {
@@ -789,6 +912,11 @@
           }
         }
       },
+      "logs": {
+        "restApi": {
+          "format": "{\"requestTime\":\"$context.requestTime\",\"requestId\":\"$context.requestId\",\"apiId\":\"$context.apiId\",\"resourceId\":\"$context.resourceId\",\"resourcePath\":\"$context.resourcePath\",\"path\":\"$context.path\",\"httpMethod\":\"$context.httpMethod\",\"status\":\"$context.status\",\"authLatency\":\"$context.authorizer.integrationLatency\",\"integrationLatency\":\"$context.integrationLatency\",\"integrationStatus\":\"$context.integrationStatus\",\"responseLatency\":\"$context.responseLatency\",\"responseLength\":\"$context.responseLength\",\"errorMessage\":\"$context.error.message\",\"format\":\"SLS_ACCESS_LOG\",\"version\":\"1.0.0\"}"
+        }
+      },
       "vpc": {}
     },
     "custom": {
@@ -802,41 +930,32 @@
     ],
     "pluginsData": {},
     "functions": {
-      "hello": {
-        "handler": "src/functions/hello/handler.main",
-        "events": [
-          {
-            "http": {
-              "method": "post",
-              "path": "hello",
-              "request": {
-                "schema": {
-                  "application/json": {
-                    "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ApiGatewayMethodHelloPostApplicationJsonModel\"][\"Properties\"][\"Schema\"]"
-                  }
-                }
-              },
-              "integration": "AWS_PROXY"
-            }
-          }
-        ],
-        "name": "shop-info-service-dev-hello",
-        "package": {
-          "artifact": ".serverless\\shop-info-service.zip"
-        },
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "nodejs14.x",
-        "vpc": {},
-        "versionLogicalId": "HelloLambdaVersionEYGUrqAoEw0rdu5puwIleMnyzu5hdX0pKd6ZbJYHVw8"
-      },
       "getShopInfo": {
-        "handler": "handler.getShopInfo",
+        "handler": "s_getShopInfo.handler",
         "events": [
           {
             "http": {
               "method": "get",
               "path": "shop-info",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
               "integration": "AWS_PROXY"
             }
           }
@@ -849,15 +968,34 @@
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "GetShopInfoLambdaVersionvanvhqRapBI8cGxgVM7GcZAlNjpAfwanRwNwAi3hss4"
+        "versionLogicalId": "GetShopInfoLambdaVersionc7uRvEwMrsK9seitO36zEctawoGFnbUUV711Xqsww"
       },
       "getShopAdminInfo": {
-        "handler": "handler.getShopAdminInfo",
+        "handler": "s_getShopAdminInfo.handler",
         "events": [
           {
             "http": {
               "method": "get",
               "path": "shop-admin-info",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
               "integration": "AWS_PROXY"
             }
           }
@@ -870,34 +1008,41 @@
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "GetShopAdminInfoLambdaVersionLIc5ujAckmS1WXE3IQl5bwaSw313CTSKYH40kdc4"
+        "versionLogicalId": "GetShopAdminInfoLambdaVersionW0C31yS22pKZfLfIsYTDzRUCNpBiA9MOhkO3g3Y"
       }
     },
     "configValidationMode": "warn",
-    "serviceFilename": "serverless.ts",
+    "serviceFilename": "serverless.yml",
+    "app": "aleks-rs-app-app",
+    "org": "aleksbyczyk",
     "layers": {},
     "initialServerlessConfig": {
       "service": {
         "$ref": "$[\"service\"][\"serviceObject\"]"
       },
+      "app": "aleks-rs-app-app",
+      "org": "aleksbyczyk",
       "frameworkVersion": "2",
-      "custom": {
-        "$ref": "$[\"service\"][\"custom\"]"
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
       },
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
       },
-      "provider": {
-        "$ref": "$[\"service\"][\"provider\"]"
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
       }
     },
-    "isDashboardMonitoringPreconfigured": false
+    "isDashboardMonitoringPreconfigured": true,
+    "isDashboardAppPreconfigured": true,
+    "orgUid": "b3da5a36-6209-4216-aaa8-e35b3c1d6eac",
+    "appUid": "R11yzQxDNq1tQHGbwj"
   },
   "package": {
-    "artifactDirectoryName": "serverless/shop-info-service/dev/1617377191099-2021-04-02T15:26:31.099Z",
+    "artifactDirectoryName": "serverless/shop-info-service/dev/1617634673814-2021-04-05T14:57:53.814Z",
     "artifact": ""
   }
 }

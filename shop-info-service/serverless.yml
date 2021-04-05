@@ -1,0 +1,46 @@
+service: shop-info-service
+
+app: aleks-rs-app-app
+org: aleksbyczyk
+
+frameworkVersion: '2'
+
+provider: 
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  stage: dev
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+functions:
+  getShopInfo:
+    handler: handler.getShopInfo
+    events:
+      - http:
+          method: get
+          path: shop-info
+          cors: true
+  getShopAdminInfo:
+    handler: handler.getShopAdminInfo
+    events:
+      - http:
+          method: get
+          path: shop-admin-info
+          cors: true
+
+
+
+
