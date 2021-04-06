@@ -1,0 +1,26 @@
+[
+  {
+    "count": 4,
+    "description": "North American P-51 Mustang WWII period fighter",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+    "price": 1780000,
+    "title": "P-51 Mustang",
+    "image": "https://wallpapermemory.com/uploads/654/north-american-p-51-mustang-background-hd-1920x1080-53134.jpg"
+  },
+  {
+    "count": 6,
+    "description": "Supermarine Spitfire mk.V WWII period fighter",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a0",
+    "price": 1810000,
+    "title": "Supermarine Spitfire mk.V",
+    "image": "https://wallpapermemory.com/uploads/154/supermarine-spitfire-background-hd-1080p-390900.jpg"
+  },
+  {
+    "count": 7,
+    "description": "Boeing B-17H Flying Fortress WWII period bomber",
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
+    "price": 4500000,
+    "title": "B-17 Flying Fortress",
+    "image": "https://wallpapermemory.com/uploads/204/boeing-b-17-flying-fortress-wallpaper-1080p-214212.jpg"
+  }
+]

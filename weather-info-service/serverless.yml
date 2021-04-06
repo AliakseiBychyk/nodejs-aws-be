@@ -1,4 +1,4 @@
-service: shop-info-service
+service: weather-info-service
 
 app: aleks-rs-app-app
 org: aleksbyczyk
@@ -26,21 +26,13 @@ custom:
     includeModules: true
 
 functions:
-  getShopInfo:
-    handler: handler.getShopInfo
+  getWeatherInfo:
+    handler: handler.getWeatherInfo
     events:
       - http:
           method: get
-          path: shop-info
+          path: weather-info
           cors: true
-  getShopAdminInfo:
-    handler: handler.getShopAdminInfo
-    events:
-      - http:
-          method: get
-          path: shop-admin-info
-          cors: true
-
 
 
 
