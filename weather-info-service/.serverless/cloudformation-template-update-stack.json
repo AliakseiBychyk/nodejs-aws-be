@@ -71,16 +71,10 @@
         }
       }
     },
-    "GetShopInfoLogGroup": {
+    "GetWeatherInfoLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/shop-info-service-dev-getShopInfo"
-      }
-    },
-    "GetShopAdminInfoLogGroup": {
-      "Type": "AWS::Logs::LogGroup",
-      "Properties": {
-        "LogGroupName": "/aws/lambda/shop-info-service-dev-getShopAdminInfo"
+        "LogGroupName": "/aws/lambda/weather-info-service-dev-getWeatherInfo"
       }
     },
     "IamRoleLambdaExecution": {
@@ -108,7 +102,7 @@
               "Fn::Join": [
                 "-",
                 [
-                  "shop-info-service",
+                  "weather-info-service",
                   "dev",
                   "lambda"
                 ]
@@ -125,7 +119,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/shop-info-service-dev*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/weather-info-service-dev*:*"
                     }
                   ]
                 },
@@ -136,7 +130,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/shop-info-service-dev*:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/weather-info-service-dev*:*:*"
                     }
                   ]
                 }
@@ -149,7 +143,7 @@
           "Fn::Join": [
             "-",
             [
-              "shop-info-service",
+              "weather-info-service",
               "dev",
               {
                 "Ref": "AWS::Region"
@@ -194,13 +188,7 @@
                   "Resource": [
                     {
                       "Fn::GetAtt": [
-                        "GetShopInfoLogGroup",
-                        "Arn"
-                      ]
-                    },
-                    {
-                      "Fn::GetAtt": [
-                        "GetShopAdminInfoLogGroup",
+                        "GetWeatherInfoLogGroup",
                         "Arn"
                       ]
                     }
@@ -212,18 +200,18 @@
         ]
       }
     },
-    "GetShopInfoLambdaFunction": {
+    "GetWeatherInfoLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/shop-info-service/dev/1617634673814-2021-04-05T14:57:53.814Z/shop-info-service.zip"
+          "S3Key": "serverless/weather-info-service/dev/1617718750781-2021-04-06T14:19:10.781Z/weather-info-service.zip"
         },
-        "Handler": "s_getShopInfo.handler",
+        "Handler": "s_getWeatherInfo.handler",
         "Runtime": "nodejs14.x",
-        "FunctionName": "shop-info-service-dev-getShopInfo",
+        "FunctionName": "weather-info-service-dev-getWeatherInfo",
         "MemorySize": 1024,
         "Timeout": 6,
         "Environment": {
@@ -239,63 +227,23 @@
         }
       },
       "DependsOn": [
-        "GetShopInfoLogGroup"
+        "GetWeatherInfoLogGroup"
       ]
     },
-    "GetShopAdminInfoLambdaFunction": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Ref": "ServerlessDeploymentBucket"
-          },
-          "S3Key": "serverless/shop-info-service/dev/1617634673814-2021-04-05T14:57:53.814Z/shop-info-service.zip"
-        },
-        "Handler": "s_getShopAdminInfo.handler",
-        "Runtime": "nodejs14.x",
-        "FunctionName": "shop-info-service-dev-getShopAdminInfo",
-        "MemorySize": 1024,
-        "Timeout": 6,
-        "Environment": {
-          "Variables": {
-            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
-          }
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "IamRoleLambdaExecution",
-            "Arn"
-          ]
-        }
-      },
-      "DependsOn": [
-        "GetShopAdminInfoLogGroup"
-      ]
-    },
-    "GetShopInfoLambdaVersionc7uRvEwMrsK9seitO36zEctawoGFnbUUV711Xqsww": {
+    "GetWeatherInfoLambdaVersionFLE75eR511IYSrpo9jjyWmyN1dZka9lnHgmEDDdFcaM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "GetShopInfoLambdaFunction"
+          "Ref": "GetWeatherInfoLambdaFunction"
         },
-        "CodeSha256": "K7efnnhswd60M3K6hAv7YxuzNBwmI0O5LGeBiXDsTf8="
-      }
-    },
-    "GetShopAdminInfoLambdaVersionW0C31yS22pKZfLfIsYTDzRUCNpBiA9MOhkO3g3Y": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "FunctionName": {
-          "Ref": "GetShopAdminInfoLambdaFunction"
-        },
-        "CodeSha256": "K7efnnhswd60M3K6hAv7YxuzNBwmI0O5LGeBiXDsTf8="
+        "CodeSha256": "Zc+sFp/fw/xB3iEtpX7O2+U4q5Pp3yNW6Y6yiYhrbu8="
       }
     },
     "ApiGatewayRestApi": {
       "Type": "AWS::ApiGateway::RestApi",
       "Properties": {
-        "Name": "shop-info-service-dev",
+        "Name": "weather-info-service-dev",
         "EndpointConfiguration": {
           "Types": [
             "EDGE"
@@ -305,7 +253,7 @@
         "MinimumCompressionSize": 1024
       }
     },
-    "ApiGatewayResourceShopDashinfo": {
+    "ApiGatewayResourceWeatherDashinfo": {
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
         "ParentId": {
@@ -314,28 +262,13 @@
             "RootResourceId"
           ]
         },
-        "PathPart": "shop-info",
+        "PathPart": "weather-info",
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
       }
     },
-    "ApiGatewayResourceShopDashadminDashinfo": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "PathPart": "shop-admin-info",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodShopDashinfoOptions": {
+    "ApiGatewayMethodWeatherDashinfoOptions": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "AuthorizationType": "NONE",
@@ -373,65 +306,20 @@
           ]
         },
         "ResourceId": {
-          "Ref": "ApiGatewayResourceShopDashinfo"
+          "Ref": "ApiGatewayResourceWeatherDashinfo"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
       }
     },
-    "ApiGatewayMethodShopDashadminDashinfoOptions": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "AuthorizationType": "NONE",
-        "HttpMethod": "OPTIONS",
-        "MethodResponses": [
-          {
-            "StatusCode": "200",
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true,
-              "method.response.header.Access-Control-Allow-Headers": true,
-              "method.response.header.Access-Control-Allow-Methods": true
-            },
-            "ResponseModels": {}
-          }
-        ],
-        "RequestParameters": {},
-        "Integration": {
-          "Type": "MOCK",
-          "RequestTemplates": {
-            "application/json": "{statusCode:200}"
-          },
-          "ContentHandling": "CONVERT_TO_TEXT",
-          "IntegrationResponses": [
-            {
-              "StatusCode": "200",
-              "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'*'",
-                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
-              },
-              "ResponseTemplates": {
-                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
-              }
-            }
-          ]
-        },
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceShopDashadminDashinfo"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodShopDashinfoGet": {
+    "ApiGatewayMethodWeatherDashinfoGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "HttpMethod": "GET",
         "RequestParameters": {},
         "ResourceId": {
-          "Ref": "ApiGatewayResourceShopDashinfo"
+          "Ref": "ApiGatewayResourceWeatherDashinfo"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -456,7 +344,7 @@
                 ":lambda:path/2015-03-31/functions/",
                 {
                   "Fn::GetAtt": [
-                    "GetShopInfoLambdaFunction",
+                    "GetWeatherInfoLambdaFunction",
                     "Arn"
                   ]
                 },
@@ -468,50 +356,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayMethodShopDashadminDashinfoGet": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "HttpMethod": "GET",
-        "RequestParameters": {},
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceShopDashadminDashinfo"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ApiKeyRequired": false,
-        "AuthorizationType": "NONE",
-        "Integration": {
-          "IntegrationHttpMethod": "POST",
-          "Type": "AWS_PROXY",
-          "Uri": {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":apigateway:",
-                {
-                  "Ref": "AWS::Region"
-                },
-                ":lambda:path/2015-03-31/functions/",
-                {
-                  "Fn::GetAtt": [
-                    "GetShopAdminInfoLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "/invocations"
-              ]
-            ]
-          }
-        },
-        "MethodResponses": []
-      }
-    },
-    "ApiGatewayDeployment1617634655564": {
+    "ApiGatewayDeployment1617718723043": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -520,55 +365,16 @@
         "StageName": "dev"
       },
       "DependsOn": [
-        "ApiGatewayMethodShopDashinfoOptions",
-        "ApiGatewayMethodShopDashadminDashinfoOptions",
-        "ApiGatewayMethodShopDashinfoGet",
-        "ApiGatewayMethodShopDashadminDashinfoGet"
+        "ApiGatewayMethodWeatherDashinfoOptions",
+        "ApiGatewayMethodWeatherDashinfoGet"
       ]
     },
-    "GetShopInfoLambdaPermissionApiGateway": {
+    "GetWeatherInfoLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
           "Fn::GetAtt": [
-            "GetShopInfoLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Action": "lambda:InvokeFunction",
-        "Principal": "apigateway.amazonaws.com",
-        "SourceArn": {
-          "Fn::Join": [
-            "",
-            [
-              "arn:",
-              {
-                "Ref": "AWS::Partition"
-              },
-              ":execute-api:",
-              {
-                "Ref": "AWS::Region"
-              },
-              ":",
-              {
-                "Ref": "AWS::AccountId"
-              },
-              ":",
-              {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "/*/*"
-            ]
-          ]
-        }
-      }
-    },
-    "GetShopAdminInfoLambdaPermissionApiGateway": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "GetShopAdminInfoLambdaFunction",
+            "GetWeatherInfoLambdaFunction",
             "Arn"
           ]
         },
@@ -603,7 +409,7 @@
     "ApiGatewayLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/api-gateway/shop-info-service-dev"
+        "LogGroupName": "/aws/api-gateway/weather-info-service-dev"
       }
     },
     "CustomApiGatewayAccountCloudWatchRole": {
@@ -644,7 +450,7 @@
                 "-",
                 [
                   "dev",
-                  "shop-info-service",
+                  "weather-info-service",
                   "custom-resources-lambda"
                 ]
               ]
@@ -709,9 +515,9 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/shop-info-service/dev/1617634673814-2021-04-05T14:57:53.814Z/custom-resources.zip"
+          "S3Key": "serverless/weather-info-service/dev/1617718750781-2021-04-06T14:19:10.781Z/custom-resources.zip"
         },
-        "FunctionName": "shop-info-service-dev-custom-resource-apigw-cw-role",
+        "FunctionName": "weather-info-service-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
         "MemorySize": 1024,
         "Runtime": "nodejs12.x",
@@ -727,30 +533,20 @@
         "IamRoleCustomResourcesLambdaExecution"
       ]
     },
-    "CloudWatchLogsSubscriptionFilterGetShopInfoLogGroup": {
+    "CloudWatchLogsSubscriptionFilterGetWeatherInfoLogGroup": {
       "Type": "AWS::Logs::SubscriptionFilter",
       "Properties": {
-        "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#shop-info-service#dev",
+        "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#weather-info-service#dev",
         "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
         "LogGroupName": {
-          "Ref": "GetShopInfoLogGroup"
-        }
-      }
-    },
-    "CloudWatchLogsSubscriptionFilterGetShopAdminInfoLogGroup": {
-      "Type": "AWS::Logs::SubscriptionFilter",
-      "Properties": {
-        "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#shop-info-service#dev",
-        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
-        "LogGroupName": {
-          "Ref": "GetShopAdminInfoLogGroup"
+          "Ref": "GetWeatherInfoLogGroup"
         }
       }
     },
     "CloudWatchLogsSubscriptionFilterApiGatewayLogGroup": {
       "Type": "AWS::Logs::SubscriptionFilter",
       "Properties": {
-        "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#shop-info-service#dev",
+        "DestinationArn": "arn:aws:logs:eu-west-1:802587217904:destination:b3da5a36-6209-4216-aaa8-e35b3c1d6eac#R11yzQxDNq1tQHGbwj#weather-info-service#dev",
         "FilterPattern": "\"SLS_ACCESS_LOG\"",
         "LogGroupName": {
           "Ref": "ApiGatewayLogGroup"
@@ -772,16 +568,10 @@
         ]
       }
     },
-    "GetShopInfoLambdaFunctionQualifiedArn": {
+    "GetWeatherInfoLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetShopInfoLambdaVersionc7uRvEwMrsK9seitO36zEctawoGFnbUUV711Xqsww"
-      }
-    },
-    "GetShopAdminInfoLambdaFunctionQualifiedArn": {
-      "Description": "Current Lambda function version",
-      "Value": {
-        "Ref": "GetShopAdminInfoLambdaVersionW0C31yS22pKZfLfIsYTDzRUCNpBiA9MOhkO3g3Y"
+        "Ref": "GetWeatherInfoLambdaVersionFLE75eR511IYSrpo9jjyWmyN1dZka9lnHgmEDDdFcaM"
       }
     },
     "ServiceEndpoint": {
