@@ -1,18 +1,41 @@
 service: product-service
 
+app: aleks-rs-app-app
+org: aleksbyczyk
+
 frameworkVersion: '2'
 
-provider:
+provider: 
   name: aws
   runtime: nodejs14.x
   lambdaHashingVersion: 20201221
-  stage: dev
   region: eu-west-1
+  stage: dev
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
 
 functions:
-  hello:
-    handler: handler.hello
+  getProductsList:
+    handler: handler.getProductsList
     events:
       - http:
-          path: products
           method: get
+          path: /products
+          cors: true
+  getProsuctsById:
+    handler: handler.getProductsById
+    events:
+      - http:
+          method: get
+          path: /products/{productId}

@@ -7,7 +7,7 @@ export const getWeatherInfo: APIGatewayProxyHandler = async (event) => {
   console.log('multiValueQueryStringParameters:', event.multiValueQueryStringParameters)
 
   const city = event.multiValueQueryStringParameters.city[0];
-  const APIKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+  const APIKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; // API Key has been hidden
 
   let weatherResponse;
   try {
@@ -15,7 +15,9 @@ export const getWeatherInfo: APIGatewayProxyHandler = async (event) => {
       .get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKey}`) 
   } catch (e) {
     console.error(e);
-    throw e;
+    return {
+      statusCode: e.statusCode,
+    };
   }
 
   console.log('response from OpenWeather', weatherResponse.data.weather);
