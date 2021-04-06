@@ -1,6 +1,7 @@
 ## Training Project Node.js - AWS
 ### Backend part
 
+## Products Service leveredges AWS Lambda to expose API data
 
 Products List:
 
@@ -19,6 +20,6 @@ Frontend:
 ```
 ```
 
-## Additional Weather Service
+## Additional Weather Service leveredges AWS Lambda and OpenWeather API
 
 This project levereges OpenWeather API and AWS Lambda for weather information
