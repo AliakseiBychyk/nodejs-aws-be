@@ -40,3 +40,4 @@ functions:
           method: get
           path: /products/{productId}
           cors: true
+          

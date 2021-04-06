@@ -8,5 +8,5 @@ export const getProductsList: APIGatewayProxyHandler = async (event) => {
   return {
     statusCode: 200,
     body: JSON.stringify(products)
-  }
+  };
 };
