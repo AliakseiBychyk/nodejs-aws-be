@@ -25,6 +25,9 @@ export const getWeatherInfo: APIGatewayProxyHandler = async (event) => {
 
   return {
     statusCode: 200,
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({
       welcome: 'Sun is shining in the sky, there is no cloud in sight!',
       city,

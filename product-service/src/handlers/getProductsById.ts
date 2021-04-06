@@ -13,6 +13,10 @@ export const getProductsById: APIGatewayProxyHandler = async (event) => {
   return !!product
     ? {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'd1e6ot7uwpnguw.cloudfront.net'
+      },
       body: JSON.stringify(product)
     }
     : {
