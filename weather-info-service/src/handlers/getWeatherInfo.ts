@@ -7,7 +7,7 @@ export const getWeatherInfo: APIGatewayProxyHandler = async (event) => {
   console.log('multiValueQueryStringParameters:', event.multiValueQueryStringParameters)
 
   const city = event.multiValueQueryStringParameters.city[0];
-  const APIKey = '285ceea9318698377af8c2a42aec78fb';
+  const APIKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
   let weatherResponse;
   try {
