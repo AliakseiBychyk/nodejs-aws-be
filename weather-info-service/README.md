@@ -8,7 +8,8 @@ https://yc1l5bo831.execute-api.eu-west-1.amazonaws.com/dev/weather-info?city={ci
 ```
 
 Query Parameters:
-`city` required  City name, state code and country code divided by comma.
+
+`city` `required`  City name, state code and country code divided by comma.
 
 Examples:
 ```
