@@ -19,6 +19,24 @@ path:
         500:
           description: Interanal Server Error
           content: {}
+      x-amazon-apigateway-integration:
+        uri:
+          # !Sub: Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListTasksFunction.Arn}/invocations
+          !Join:
+            - ''
+            - - "arn:aws:apigateway:"
+              - Ref: AWA::Region
+              - ":lambda:path/2015-03-31/functions/"
+              - !GetAtt GetProductsListLambdaFunction.Arn
+              - '/invocations'
+        responses:
+          default:
+            statusCode: 200
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        contentHandling: CONVERT_TO_TEXT
+        type: aws_proxy
+
   /products/{productId}:
     get:
       summary: Product Item
@@ -32,24 +50,26 @@ path:
                 type: object
                 item:
                   $ref: "#/components/schemas/Product"
-
-x-amazon-apigateway-integration:
-  uri:
-    # !Sub: Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListTasksFunction.Arn}/invocations
-    !Join:
-      - ''
-      - - "arn:aws:apigateway:"
-        - Ref: AWA::Region
-        - ":lambda:path/2015-03-31/functions/"
-        - !GetAtt GetProductsListLambdaFunction.Arn
-        - '/invocations'
-  responses:
-    default:
-      statusCode: 200
-  passthroughBehavior: when_no_match
-  httpMethod: POST
-  contentHandling: CONVERT_TO_TEXT
-  type: aws_proxy
+        500:
+          description: Interanal Server Error
+          content: {}
+      x-amazon-apigateway-integration:
+        uri:
+          # !Sub: Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListTasksFunction.Arn}/invocations
+          !Join:
+            - ''
+            - - "arn:aws:apigateway:"
+              - Ref: AWA::Region
+              - ":lambda:path/2015-03-31/functions/"
+              - !GetAtt GetProductByIdLambdaFunction.Arn
+              - '/invocations'
+        responses:
+          default:
+            statusCode: 200
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        contentHandling: CONVERT_TO_TEXT
+        type: aws_proxy
 
 components:
   schemas:
