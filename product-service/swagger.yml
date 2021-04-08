@@ -1,0 +1,71 @@
+openapi: 3.0.1
+info: 
+  title: Product Service API
+  version: v1.0
+path:
+  /products:
+    get:
+      summary: Products List
+      description: Returns a list of products
+      responses:
+        200: 
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        500:
+          description: Interanal Server Error
+          content: {}
+  /products/{productId}:
+    get:
+      summary: Product Item
+      description: Returns a specified product
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                item:
+                  $ref: "#/components/schemas/Product"
+
+x-amazon-apigateway-integration:
+  uri:
+    # !Sub: Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListTasksFunction.Arn}/invocations
+    !Join:
+      - ''
+      - - "arn:aws:apigateway:"
+        - Ref: AWA::Region
+        - ":lambda:path/2015-03-31/functions/"
+        - !GetAtt GetProductsListLambdaFunction.Arn
+        - '/invocations'
+  responses:
+    default:
+      statusCode: 200
+  passthroughBehavior: when_no_match
+  httpMethod: POST
+  contentHandling: CONVERT_TO_TEXT
+  type: aws_proxy
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        count:
+          type: integer
+        description:
+          type: string
+        id:
+          type: string
+        price:
+          type: number
+        title:
+          type: string
+        image:
+          type: string
+

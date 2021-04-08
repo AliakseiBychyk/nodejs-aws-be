@@ -10,7 +10,10 @@ provider:
   runtime: nodejs14.x
   lambdaHashingVersion: 20201221
   region: eu-west-1
+  profile: private
   stage: dev
+  httpApi:
+    cors: true
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
@@ -40,4 +43,3 @@ functions:
           method: get
           path: /products/{productId}
           cors: true
-          
