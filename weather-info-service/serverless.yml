@@ -1,0 +1,39 @@
+service: weather-info-service
+
+app: aleks-rs-app-app
+org: aleksbyczyk
+
+frameworkVersion: '2'
+
+provider: 
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  profile: private
+  stage: dev
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+functions:
+  getWeatherInfo:
+    handler: handler.getWeatherInfo
+    events:
+      - http:
+          method: get
+          path: weather-info
+          cors: true
+
+
+
