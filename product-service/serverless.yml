@@ -19,6 +19,11 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    PG_HOST: ${ssm:/db_host}
+    PG_PORT: 5432
+    PG_DATABASE: ${ssm:/db_database}
+    PG_USERNAME: ${ssm:/db_username}
+    PG_PASSWORD: ${ssm:/db_password}
 
 plugins:
   - serverless-webpack
