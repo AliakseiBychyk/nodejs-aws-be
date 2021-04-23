@@ -13,9 +13,6 @@ export default {
     database: PG_DATABASE,
     user: PG_USERNAME,
     password: PG_PASSWORD,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-    connectTimeoutMillis: 5000,
+    connectionTimeoutMillis: 5000,
   },
 };

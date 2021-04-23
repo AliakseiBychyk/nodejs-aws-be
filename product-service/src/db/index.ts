@@ -18,18 +18,19 @@ class dbService {
 
   constructor() {
     this.client = new Client(dbConfig)
+    console.log('db config: ', dbConfig)
   }
 
-  public async executeQuery(query: string) {
-    this.client.connect();
+  public async executeQuery(query: string) {   
+    await this.client.connect()
     try { 
-      this.result = await this.client.query(query);
-      await this.client.end()
-      
-      return this.result;
+      const { rows } = await this.client.query(query);
+      return rows
     } catch (err) {
       console.error(err);
       throw err;
+    } finally {
+      this.client.end();
     }
   };
 };
