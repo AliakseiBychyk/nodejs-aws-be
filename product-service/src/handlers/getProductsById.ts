@@ -14,9 +14,22 @@ export const getProductsById: APIGatewayProxyHandler = async (event) => {
     FROM products
     LEFT JOIN stock ON products.id = stock.product_id
     WHERE id = '${productId}';
-  `
-  const product = await dbService.executeQuery(query);
+  `;
 
+  let product;
+  try {
+    product = await dbService.executeQuery(query);
+  } catch (err) {
+    return {
+      statusCode: 500,
+      message: 'Something went wrong',
+    };
+  }
+
+  if (product.length === 0) {
+    return { statusCode: 404, message: 'Product not found' };
+  }
+  
   return {
     statusCode: 200,
     headers: {

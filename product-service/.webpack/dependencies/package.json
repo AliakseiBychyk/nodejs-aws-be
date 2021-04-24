@@ -1,0 +1,11 @@
+{
+  "name": "product-service",
+  "version": "1.0.0",
+  "description": "Packaged externals for product-service",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "pg": "^8.6.0",
+    "source-map-support": "^0.5.19"
+  }
+}
