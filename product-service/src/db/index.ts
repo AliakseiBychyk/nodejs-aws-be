@@ -15,6 +15,7 @@ class dbService {
     await this.client.connect()
     try { 
       const { rows } = await this.client.query(query);
+      console.log('received rows:', rows)
       return rows
     } catch (err) {
       console.error(err);
