@@ -24,6 +24,6 @@ export const getProductsById: APIGatewayProxyHandler = async (event) => {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true,
     },
-    body: JSON.stringify(product)
+    body: JSON.stringify(product[0])
   };
 };
