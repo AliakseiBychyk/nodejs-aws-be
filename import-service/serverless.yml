@@ -1,0 +1,38 @@
+service: import-service;
+
+app: aleks-rs-app-app
+org: aleksbyczyk
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  profile: private
+  stage: dev
+  httpApi:
+    cors: true
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+  plugins:
+    - serverless-webpack
+  
+  custom:
+    webpack:
+      webpackConfig: ./webpack.config.js
+      includeModules: true
+  
+  functions:
+    importProductFile: 
+      handler: handler.importProductFile
+      events:
+        - http:
+            method: GET
+            path: /import 
+            cors: true
