@@ -1,4 +1,4 @@
-service: import-service;
+service: import-service
 
 app: aleks-rs-app-app
 org: aleksbyczyk
@@ -19,20 +19,58 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    BUCKET_NAME: import-service-bucket
 
-  plugins:
-    - serverless-webpack
+  iamRoleStatements:
+    - Effect: Allow
+      Action: s3:ListBucket
+      Resource:
+        - arn:aws:s3:::BUCKET
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - arn:aws:s3:::BUCKET/*
+
+plugins:
+  - serverless-webpack
   
-  custom:
-    webpack:
-      webpackConfig: ./webpack.config.js
-      includeModules: true
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
   
-  functions:
-    importProductFile: 
-      handler: handler.importProductFile
-      events:
-        - http:
-            method: GET
-            path: /import 
-            cors: true
+functions:
+  importProductFile: 
+    handler: handler.importProductFile
+    events:
+      - http:
+          method: GET
+          path: /import 
+          cors: true
+
+resources:
+  Resources:
+    ## S3 Bucket
+    ProductsS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.BUCKET_NAME}
+        AccessControl: PublicRead
+    
+    ## S3 Bucket Policy  
+    ProductsS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref ProductsS3Bucket
+        PolicyDocument:
+          Statement:
+            - Sid: AllowPublicRead
+              Effect: Allow
+              Action: s3:GetObject
+              Resource: !GetAtt ProductsS3Bucket.Arn
+              Principal: AWS:*
+  Outputs:
+    ProductsS3BucketOutput:
+      Description: S3 bucket for products
+      Value: !Ref ProductsS3Bucket     
