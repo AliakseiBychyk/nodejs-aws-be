@@ -11,7 +11,7 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
   
   const { name: fileName } = event.queryStringParameters;
   
-  const filePath = `uploaded/${fileName}.csv`;
+  const filePath = `uploaded/${fileName}`;
 
   const params = {
     Bucket: BUCKET,
@@ -31,5 +31,13 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
     throw error;
   }
 
-  return signedUrl;
+  return {
+    statusCode: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
+    body: JSON.stringify({ data: signedUrl })
+  };
 }
