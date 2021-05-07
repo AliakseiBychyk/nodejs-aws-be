@@ -19,18 +19,18 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    BUCKET_NAME: import-service-bucket
+    BUCKET_NAME: aleksbyczyk-import-service-bucket
 
   iamRoleStatements:
     - Effect: Allow
       Action: s3:ListBucket
       Resource:
-        - arn:aws:s3:::BUCKET
+        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}
     - Effect: Allow
       Action:
         - s3:*
       Resource:
-        - arn:aws:s3:::BUCKET/*
+        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
 
 plugins:
   - serverless-webpack
@@ -69,7 +69,8 @@ resources:
               Effect: Allow
               Action: s3:GetObject
               Resource: !GetAtt ProductsS3Bucket.Arn
-              Principal: AWS:*
+              Principal: 
+                AWS: '*'
   Outputs:
     ProductsS3BucketOutput:
       Description: S3 bucket for products
