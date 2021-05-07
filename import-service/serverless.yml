@@ -42,12 +42,21 @@ custom:
   
 functions:
   importProductFile: 
-    handler: handler.importProductFile
+    handler: handler.importProductsFile
     events:
       - http:
           method: GET
-          path: /import 
+          path: /import/{fileName}
           cors: true
+  # importFileParser:
+  #   handler: handler.importFileParser
+  #   events:
+  #     - s3:
+  #       bucket: ${self:provider.environment.BUCKET_NAME}
+  #       event: s3:ObjectCreated:*
+  #       rules:
+  #         - prefix: images/
+  #       existing: true ## only when bucket exists but not created with cloudformation
 
 resources:
   Resources:
