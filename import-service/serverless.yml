@@ -46,7 +46,7 @@ functions:
     events:
       - http:
           method: GET
-          path: /import/{fileName}
+          path: /import
           cors: true
   # importFileParser:
   #   handler: handler.importFileParser

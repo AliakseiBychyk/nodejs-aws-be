@@ -9,14 +9,15 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
   
   const s3 = new S3({ region: 'eu-west-1' });
   
-  const { fileName } = event.pathParameters;
+  const { name: fileName } = event.queryStringParameters;
+  
   const filePath = `uploaded/${fileName}.csv`;
 
   const params = {
     Bucket: BUCKET,
     Key: filePath,
     Expires: 60,
-    ContntType: 'text/csv',
+    ContentType: 'text/csv',
   };
 
   let signedUrl;
