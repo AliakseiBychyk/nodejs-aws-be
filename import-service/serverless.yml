@@ -68,8 +68,8 @@ resources:
             - Sid: AllowPublicRead
               Effect: Allow
               Action: s3:GetObject
-              Resource: !GetAtt ProductsS3Bucket.Arn
-              Principal: 
+              Resource: !Sub ${ProductsS3Bucket.Arn}/*
+              Principal:
                 AWS: '*'
   Outputs:
     ProductsS3BucketOutput:
