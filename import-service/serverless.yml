@@ -19,7 +19,7 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    BUCKET_NAME: aleksbyczyk-import-service-bucket
+    BUCKET_NAME: ${self:custom.s3BucketName}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -36,6 +36,7 @@ plugins:
   - serverless-webpack
   
 custom:
+  s3BucketName: aleksbyczyk-import-service-bucket
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -43,20 +44,23 @@ custom:
 functions:
   importProductFile: 
     handler: handler.importProductsFile
+    description: Provides signed url for upload a .csv file
     events:
       - http:
           method: GET
           path: /import
           cors: true
-  # importFileParser:
-  #   handler: handler.importFileParser
-  #   events:
-  #     - s3:
-  #       bucket: ${self:provider.environment.BUCKET_NAME}
-  #       event: s3:ObjectCreated:*
-  #       rules:
-  #         - prefix: uploaded/
-  #       existing: true ## only when bucket exists but not created with cloudformation
+  importFileParser:
+    handler: handler.importFileParser
+    description: Parses .csv file and move it into /parsed folder
+    events:
+      - s3:
+          bucket: !Ref ProductsS3Bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+            - suffix: .csv
+          existing: true
 
 resources:
   Resources:
@@ -64,7 +68,7 @@ resources:
     ProductsS3Bucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:provider.environment.BUCKET_NAME}
+        BucketName: ${self:custom.s3BucketName}
         AccessControl: PublicRead
         CorsConfiguration:
           CorsRules:

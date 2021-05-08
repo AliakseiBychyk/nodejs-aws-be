@@ -11,7 +11,7 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
     region: 'eu-west-1',
     signatureVersion: 'v4',
   });
-  
+
   const { name: fileName } = event.queryStringParameters;
   
   const filePath = `uploaded/${fileName}`;
