@@ -20,16 +20,16 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     BUCKET_NAME: aleksbyczyk-import-service-bucket
-
   iamRoleStatements:
     - Effect: Allow
-      Action: s3:ListBucket
-      Resource:
+      Action:
+        - s3:ListBucket
+      Resource: 
         - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}
     - Effect: Allow
       Action:
         - s3:*
-      Resource:
+      Resource: 
         - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
 
 plugins:
@@ -55,7 +55,7 @@ functions:
   #       bucket: ${self:provider.environment.BUCKET_NAME}
   #       event: s3:ObjectCreated:*
   #       rules:
-  #         - prefix: images/
+  #         - prefix: uploaded/
   #       existing: true ## only when bucket exists but not created with cloudformation
 
 resources:
@@ -66,6 +66,15 @@ resources:
       Properties:
         BucketName: ${self:provider.environment.BUCKET_NAME}
         AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+              AllowedOrigins:
+                - '*'
     
     ## S3 Bucket Policy  
     ProductsS3BucketPolicy:

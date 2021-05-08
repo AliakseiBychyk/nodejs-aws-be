@@ -7,7 +7,10 @@ const BUCKET = process.env.BUCKET_NAME;
 export const importProductsFile: APIGatewayProxyHandler = async (event) => {
   console.log('importProductsFiles lambda invocation with event:', event);
   
-  const s3 = new S3({ region: 'eu-west-1' });
+  const s3 = new S3({
+    region: 'eu-west-1',
+    signatureVersion: 'v4',
+  });
   
   const { name: fileName } = event.queryStringParameters;
   
@@ -38,6 +41,6 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true,
     },
-    body: JSON.stringify({ data: signedUrl })
+    body: signedUrl
   };
 }
