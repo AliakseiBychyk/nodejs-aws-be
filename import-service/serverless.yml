@@ -19,18 +19,20 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    BUCKET_NAME: ${self:custom.s3BucketName}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - s3:ListBucket
-      Resource: 
-        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}
-    - Effect: Allow
-      Action:
-        - s3:*
-      Resource: 
-        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
+    BUCKET_NAME: !Ref ProductsS3Bucket
+  iam: 
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource: 
+            - !GetAtt ProductsS3Bucket.Arn
+        - Effect: Allow
+          Action:
+            - s3:*
+          Resource: 
+            - !Sub ${ProductsS3Bucket.Arn}/*
 
 plugins:
   - serverless-webpack
