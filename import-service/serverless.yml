@@ -19,35 +19,50 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    BUCKET_NAME: import-service-bucket
-
-  iamRoleStatements:
-    - Effect: Allow
-      Action: s3:ListBucket
-      Resource:
-        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}
-    - Effect: Allow
-      Action:
-        - s3:*
-      Resource:
-        - arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
+    BUCKET_NAME: !Ref ProductsS3Bucket
+  iam: 
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource: 
+            - !GetAtt ProductsS3Bucket.Arn
+        - Effect: Allow
+          Action:
+            - s3:*
+          Resource: 
+            - !Sub ${ProductsS3Bucket.Arn}/*
 
 plugins:
   - serverless-webpack
   
 custom:
+  s3BucketName: aleksbyczyk-import-service-bucket
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
   
 functions:
   importProductFile: 
-    handler: handler.importProductFile
+    handler: handler.importProductsFile
+    description: Provides signed url for upload a .csv file
     events:
       - http:
           method: GET
-          path: /import 
+          path: /import
           cors: true
+  importFileParser:
+    handler: handler.importFileParser
+    description: Parses .csv file and move it into /parsed folder
+    events:
+      - s3:
+          bucket: !Ref ProductsS3Bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+            - suffix: .csv
+          existing: true
 
 resources:
   Resources:
@@ -55,8 +70,17 @@ resources:
     ProductsS3Bucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:provider.environment.BUCKET_NAME}
+        BucketName: ${self:custom.s3BucketName}
         AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+              AllowedOrigins:
+                - '*'
     
     ## S3 Bucket Policy  
     ProductsS3BucketPolicy:
@@ -68,8 +92,9 @@ resources:
             - Sid: AllowPublicRead
               Effect: Allow
               Action: s3:GetObject
-              Resource: !GetAtt ProductsS3Bucket.Arn
-              Principal: AWS:*
+              Resource: !Sub ${ProductsS3Bucket.Arn}/*
+              Principal:
+                AWS: '*'
   Outputs:
     ProductsS3BucketOutput:
       Description: S3 bucket for products

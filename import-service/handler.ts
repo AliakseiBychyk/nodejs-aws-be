@@ -1,5 +1,6 @@
 import 'source-map-support/register';
 
-import { importProductsFiles } from './src/handlers/importProductsFiles';
+import { importProductsFile } from './src/handlers/importProductsFile';
+import { importFileParser } from './src/handlers/importFileParser';
 
-export { importProductsFiles };
+export { importProductsFile, importFileParser };
