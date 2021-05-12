@@ -47,11 +47,9 @@ export const importFileParser: S3Handler = async (event) => {
       outputParams.Body= pipeline;
       console.log('outputParams', outputParams);
 
-      s3.upload(outputParams)
-        .send((err, data)=> {
-          if (err) reject(err);
-          resolve(data);
-        })      
+      s3.upload(outputParams).promise()
+        .then(data => resolve(data))
+        .catch(err => reject(err));  
     })
   ));
 
