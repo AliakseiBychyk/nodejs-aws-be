@@ -33,7 +33,7 @@ export const importFileParser: S3Handler = async (event) => {
         Key: record.s3.object.key,
       };
 
-      let pipeline = s3.getObject(params)
+      const pipeline = s3.getObject(params)
         .createReadStream()
         .on('error', err => reject(err))
         .pipe(csv())
