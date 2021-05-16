@@ -34,6 +34,15 @@ provider:
             - s3:*
           Resource: 
             - !Sub ${ProductsS3Bucket.Arn}/*
+        - Effect: Allow
+          Action:
+            - sqs:*
+          Resource:
+            - !GetAtt ProductsSqsQueue.Arn
+        - Effect: Allow
+          Action:
+            - sns:*
+          Resource: !Ref ProductsSnsTopic
 
 plugins:
   - serverless-webpack
@@ -41,6 +50,8 @@ plugins:
 custom:
   s3BucketName: aleksbyczyk-import-service-bucket
   sqsQueueName: aleksbyczyk-import-service-queue
+  snsTopicName: aleksbyczyk-import-service-topic
+  snsSubscriptionName: aleksbyczyk-import-service-subscription
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -112,6 +123,22 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.sqsQueueName}
+    
+    ## SNS Topic
+    ProductsSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom:snsTopicName}
+
+    ## SNS Subscription
+    ProductsSnsSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        SubscriptionName: ${self:custom:snsSubscriptionName}
+        Endpoint:
+        Protocol: email
+        TopicArn: !GetAtt ProductsSnsTopic.Arn
+
 
 
   Outputs:
