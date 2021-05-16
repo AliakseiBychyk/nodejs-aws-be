@@ -20,6 +20,7 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     BUCKET_NAME: !Ref ProductsS3Bucket
+    SQS_URL: !Ref ProductsSqsQueue
   iam: 
     role:
       statements:
@@ -39,6 +40,7 @@ plugins:
   
 custom:
   s3BucketName: aleksbyczyk-import-service-bucket
+  sqsQueueName: aleksbyczyk-import-service-queue
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -52,9 +54,10 @@ functions:
           method: GET
           path: /import
           cors: true
+
   importFileParser:
     handler: handler.importFileParser
-    description: Parses .csv file and move it into /parsed folder
+    description: Parses .csv file and move processed .csv into /parsed folder
     events:
       - s3:
           bucket: !Ref ProductsS3Bucket
@@ -63,6 +66,14 @@ functions:
             - prefix: uploaded/
             - suffix: .csv
           existing: true
+
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    description: Writes uploaded files into database table
+    events:
+      - sqs:
+          batchSize: 5
+          arn: !GetAtt ProductsSqsQueue.Arn
 
 resources:
   Resources:
@@ -95,6 +106,14 @@ resources:
               Resource: !Sub ${ProductsS3Bucket.Arn}/*
               Principal:
                 AWS: '*'
+
+    ## SQS Queue
+    ProductsSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.sqsQueueName}
+
+
   Outputs:
     ProductsS3BucketOutput:
       Description: S3 bucket for products
