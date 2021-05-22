@@ -17,6 +17,7 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    OPEN_WEATHER_API_KEY: ${ssm:/open_weather_api_key~true}
 
 plugins:
   - serverless-webpack

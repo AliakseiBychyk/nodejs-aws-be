@@ -21,3 +21,10 @@ https://d1e6ot7uwpnguw.cloudfront.net/
 ## Additional Weather Service leveredges AWS Lambda and OpenWeather API
 
 This project levereges OpenWeather API and AWS Lambda for weather information
+
+https://rvjhebe28l.execute-api.eu-west-1.amazonaws.com/dev/weather-info?city={city},{?country}
+
+Examples:
+https://rvjhebe28l.execute-api.eu-west-1.amazonaws.com/dev/weather-info?city=Minsk
+https://rvjhebe28l.execute-api.eu-west-1.amazonaws.com/dev/weather-info?city=Brest,BY
+https://rvjhebe28l.execute-api.eu-west-1.amazonaws.com/dev/weather-info?city=Brest,FR
