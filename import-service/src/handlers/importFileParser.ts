@@ -1,15 +1,16 @@
 import { S3Handler } from 'aws-lambda';
 import 'source-map-support/register';
-import S3 from 'aws-sdk/clients/s3';
+import AWS from 'aws-sdk';
 import csv from 'csv-parser';
 
 
-const BUCKET = process.env.BUCKET_NAME;
+const { BUCKET_NAME: BUCKET, SQS_URL } = process.env;
 
-const s3 = new S3({
-  region: 'eu-west-1',
-  signatureVersion: 'v4',
-});
+AWS.config.update({ region: 'eu-west-1' });
+
+const s3 = new AWS.S3({ signatureVersion: 'v4' });
+const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+
 
 export const importFileParser: S3Handler = async (event) => {
   console.log('importFileParser lambda invocation with event:', event);
@@ -42,7 +43,7 @@ export const importFileParser: S3Handler = async (event) => {
 
   const uploadedFilesPromises = event.Records.map(record => (
     new Promise(resolve => {
-      const params: S3.Types.GetObjectRequest = {
+      const params: AWS.S3.Types.GetObjectRequest = {
         Bucket: BUCKET,
         Key: record.s3.object.key,
       };
@@ -68,11 +69,24 @@ export const importFileParser: S3Handler = async (event) => {
     })
   ));
 
-
-
   try {
-    const [ result ] = await Promise.all(uploadedFilesPromises);
+    const [ result ] = await Promise.all(uploadedFilesPromises) as Array<any>;
     console.log('Parsed result: ', result);
+
+    result.forEach(product => {
+      console.log('product: ', JSON.stringify(product));
+
+      sqs.sendMessage({
+        QueueUrl: SQS_URL,
+        MessageBody: JSON.stringify(product)
+      }).promise()
+        .then(() => {
+          console.log('Send message for: ', product)
+        })
+        .catch((err) => {
+          console.log('Error when send to sqs: ', err)
+        });
+    })
 
     await moveProcessedFiles(event);
 
