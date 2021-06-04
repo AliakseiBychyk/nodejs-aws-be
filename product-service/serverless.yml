@@ -23,21 +23,11 @@ provider:
     PG_DATABASE: ${ssm:/db_database}
     PG_USERNAME: ${ssm:/db_username}
     PG_PASSWORD: ${ssm:/db_password}
-    # EMAIL_ADDRESS: ${ssm:/email~true}
-  # iam:
-  #   role:
-  #     statements:
-  #       - Effect: Allow
-  #         Action:
-  #           - sns:*
-  #         Resource: 
-  #           - !Ref ProductsSnsTopic
 
 plugins:
   - serverless-webpack
 
 custom:
-  # snsTopicName: aleksbyczyk-import-service-topic
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -57,19 +47,3 @@ functions:
           method: get
           path: /products/{productId}
           cors: true
-
-# resources:
-#   Resources:
-#     ## SNS Topic
-#     ProductsSnsTopic:
-#       Type: AWS::SNS::Topic
-#       Properties:
-#         TopicName: ${self:custom.snsTopicName}
-
-#     ## SNS Subscription
-#     ProductsSnsSubscription:
-#       Type: AWS::SNS::Subscription
-#       Properties:
-#         Endpoint: ${self:provider.environment.EMAIL_ADDRESS}
-#         Protocol: email
-#         TopicArn: !Ref ProductsSnsTopic
