@@ -5,15 +5,9 @@ import dbService from '../db';
 export const getProductsList : APIGatewayProxyHandler = async(event) => {
   console.log('getProductsList lambda invocation with event:', event);
 
-  const query = `
-  SELECT *, stock.count
-    FROM products
-    LEFT JOIN stock ON products.id = stock.product_id;
-  `;
-
   let products;
   try { 
-    products = await dbService.executeQuery(query);
+    products = await dbService.getProducts();
   } catch (err) {
     return {
       statusCode: 500,

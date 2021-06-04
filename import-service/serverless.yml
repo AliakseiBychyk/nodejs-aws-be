@@ -21,6 +21,7 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     BUCKET_NAME: !Ref ProductsS3Bucket
     SQS_URL: !Ref ProductsSqsQueue
+    # EMAIL_ADDRESS: ${ssm:/email~true}
   iam: 
     role:
       statements:
@@ -39,10 +40,11 @@ provider:
             - sqs:*
           Resource:
             - !GetAtt ProductsSqsQueue.Arn
-        - Effect: Allow
-          Action:
-            - sns:*
-          Resource: !Ref ProductsSnsTopic
+        # - Effect: Allow
+        #   Action:
+        #     - sns:*
+        #   Resource: 
+        #     - !Ref ProductsSnsTopic
 
 plugins:
   - serverless-webpack
@@ -50,8 +52,7 @@ plugins:
 custom:
   s3BucketName: aleksbyczyk-import-service-bucket
   sqsQueueName: aleksbyczyk-import-service-queue
-  snsTopicName: aleksbyczyk-import-service-topic
-  snsSubscriptionName: aleksbyczyk-import-service-subscription
+  # snsTopicName: aleksbyczyk-import-service-topic
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -124,22 +125,20 @@ resources:
       Properties:
         QueueName: ${self:custom.sqsQueueName}
     
-    ## SNS Topic
-    ProductsSnsTopic:
-      Type: AWS::SNS::Topic
-      Properties:
-        TopicName: ${self:custom:snsTopicName}
+    # ## SNS Topic
+    # ProductsSnsTopic:
+    #   Type: AWS::SNS::Topic
+    #   Properties:
+    #     DisplayName: ${self:custom.snsTopicName}
+    #     TopicName: ${self:custom.snsTopicName}
 
-    ## SNS Subscription
-    ProductsSnsSubscription:
-      Type: AWS::SNS::Subscription
-      Properties:
-        SubscriptionName: ${self:custom:snsSubscriptionName}
-        Endpoint:
-        Protocol: email
-        TopicArn: !GetAtt ProductsSnsTopic.Arn
-
-
+    # ## SNS Subscription
+    # ProductsSnsSubscription:
+    #   Type: AWS::SNS::Subscription
+    #   Properties:
+    #     Endpoint: ${self:provider.environment.EMAIL_ADDRESS}
+    #     Protocol: email
+    #     TopicArn: !Ref ProductsSnsTopic
 
   Outputs:
     ProductsS3BucketOutput:

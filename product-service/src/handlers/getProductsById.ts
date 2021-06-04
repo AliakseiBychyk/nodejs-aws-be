@@ -9,16 +9,9 @@ export const getProductsById: APIGatewayProxyHandler = async (event) => {
   const { productId } = event.pathParameters;
   console.log('product id :', productId, typeof productId)
 
-  const query = `
-  SELECT *, stock.count
-    FROM products
-    LEFT JOIN stock ON products.id = stock.product_id
-    WHERE id = '${productId}';
-  `;
-
   let product;
   try {
-    product = await dbService.executeQuery(query);
+    product = await dbService.getProductById(productId);
   } catch (err) {
     return {
       statusCode: 500,

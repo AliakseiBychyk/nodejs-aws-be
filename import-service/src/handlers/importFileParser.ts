@@ -18,7 +18,6 @@ export const importFileParser: S3Handler = async (event) => {
   const moveProcessedFiles = async (event) => {
     
     for (const record of event.Records) {
-      console.log('key:', record.s3.object.key);
 
       await s3.copyObject({
         Bucket: BUCKET,
