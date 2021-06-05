@@ -20,8 +20,7 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     BUCKET_NAME: !Ref ProductsS3Bucket
-    SQS_URL: !Ref ProductsSqsQueue
-    # EMAIL_ADDRESS: ${ssm:/email~true}
+    SQS_URL: !ImportValue ProductsSqsQueue
   iam: 
     role:
       statements:
@@ -39,20 +38,13 @@ provider:
           Action:
             - sqs:*
           Resource:
-            - !GetAtt ProductsSqsQueue.Arn
-        # - Effect: Allow
-        #   Action:
-        #     - sns:*
-        #   Resource: 
-        #     - !Ref ProductsSnsTopic
+            - !ImportValue ProductsSqsQueueArn
 
 plugins:
   - serverless-webpack
   
 custom:
   s3BucketName: aleksbyczyk-import-service-bucket
-  sqsQueueName: aleksbyczyk-import-service-queue
-  # snsTopicName: aleksbyczyk-import-service-topic
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -78,14 +70,6 @@ functions:
             - prefix: uploaded/
             - suffix: .csv
           existing: true
-
-  catalogBatchProcess:
-    handler: handler.catalogBatchProcess
-    description: Writes uploaded files into database table
-    events:
-      - sqs:
-          batchSize: 5
-          arn: !GetAtt ProductsSqsQueue.Arn
 
 resources:
   Resources:
@@ -118,27 +102,6 @@ resources:
               Resource: !Sub ${ProductsS3Bucket.Arn}/*
               Principal:
                 AWS: '*'
-
-    ## SQS Queue
-    ProductsSqsQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${self:custom.sqsQueueName}
-    
-    # ## SNS Topic
-    # ProductsSnsTopic:
-    #   Type: AWS::SNS::Topic
-    #   Properties:
-    #     DisplayName: ${self:custom.snsTopicName}
-    #     TopicName: ${self:custom.snsTopicName}
-
-    # ## SNS Subscription
-    # ProductsSnsSubscription:
-    #   Type: AWS::SNS::Subscription
-    #   Properties:
-    #     Endpoint: ${self:provider.environment.EMAIL_ADDRESS}
-    #     Protocol: email
-    #     TopicArn: !Ref ProductsSnsTopic
 
   Outputs:
     ProductsS3BucketOutput:
