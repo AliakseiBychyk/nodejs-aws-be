@@ -23,11 +23,29 @@ provider:
     PG_DATABASE: ${ssm:/db_database}
     PG_USERNAME: ${ssm:/db_username}
     PG_PASSWORD: ${ssm:/db_password}
+    EMAIL_ADDRESS: ${ssm:/email~true}
+    SQS_URL: !Ref ProductsSqsQueue
+    SNS_TOPIC_ARN: !Ref ProductsSnsTopic
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sns:*
+          Resource: 
+            - !Ref ProductsSnsTopic
+        - Effect: Allow
+          Action:
+            - sqs:*
+          Resource:
+            - !GetAtt ProductsSqsQueue.Arn
 
 plugins:
   - serverless-webpack
 
 custom:
+  sqsQueueName: aleksbyczyk-import-service-queue
+  snsTopicName: aleksbyczyk-import-service-topic
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -40,6 +58,7 @@ functions:
           method: get
           path: /products
           cors: true
+
   getProductsById:
     handler: handler.getProductsById
     events:
@@ -47,3 +66,46 @@ functions:
           method: get
           path: /products/{productId}
           cors: true
+  
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    description: Writes uploaded files into database table
+    events:
+      - sqs:
+          batchSize: 5
+          arn: !GetAtt ProductsSqsQueue.Arn
+
+resources:
+  Resources:
+    ## SQS Queue
+    ProductsSqsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.sqsQueueName}
+
+    ## SNS Topic
+    ProductsSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom.snsTopicName}
+
+    ## SNS Subscription
+    ProductsSnsSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${self:provider.environment.EMAIL_ADDRESS}
+        Protocol: email
+        TopicArn: !Ref ProductsSnsTopic
+  
+  Outputs:
+    ProductsSqsQueueOutput:
+      Description: SQS queue for upload products
+      Value: !Ref ProductsSqsQueue
+      Export:
+        Name: ProductsSqsQueue
+        
+    ProductsSqsQueueArnOutput:
+      Description: SQS queue arn
+      Value: !GetAtt ProductsSqsQueue.Arn
+      Export:
+        Name: ProductsSqsQueueArn

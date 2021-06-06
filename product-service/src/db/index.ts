@@ -28,6 +28,8 @@ class dbService {
       console.log('connection closed');
     }
 
+    console.log('this.result:: ', this.result)
+
     return this.result;
   };
 
@@ -53,8 +55,9 @@ class dbService {
   public async createProduct(title: string, description: string, price: number, image: string): Promise<Partial<IProduct>[]> {
     const query = `
     INSERT INTO products (title, description, price, image)
-      values(${title}, ${description}, ${price}, ${image})
+      values('${title}', '${description}', ${price}, '${image}')
     `;
+    console.log(query);
     return await this.executeQuery(query);
   }
 
