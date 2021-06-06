@@ -1,0 +1,52 @@
+service: authentication-service
+
+app: aleks-rs-app-app
+org: aleksbyczyk
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  profile: private
+  stage: dev
+  httpApi:
+    cors: true
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    PASSWORD: ${ssm:}
+
+functions:
+  tokenAuth:
+    handler: handler.tokenAuthorizer
+    description: Authentication with token
+    events:
+      - http:
+          method: GET
+          path: token
+          cors: true
+          authorizer:
+            name: tokenAuthorizer
+            arn:
+            resultTltInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+
+  requestAuth:
+    handler: handler.requestAuthorizer
+    description: Authentication with request
+    events:
+      - http:
+          method: GET
+          path: request
+          cors: true
+          authorizer:
+            name: requestAuthorizer
+            arn:
+            resultTltInSeconds: 0
+            identitySource: method.request.queryString.token
+            type: request
