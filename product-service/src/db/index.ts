@@ -12,7 +12,7 @@ class dbService {
     console.log('db config: ', dbConfig)
   }
 
-  public async executeQuery(query: string): Promise<IProduct[]> {   
+  private async executeQuery(query: string): Promise<IProduct[]> {   
     this.client = new Client(dbConfig);
 
     await this.client.connect();
