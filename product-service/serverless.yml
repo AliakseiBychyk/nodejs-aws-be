@@ -25,6 +25,7 @@ provider:
     PG_PASSWORD: ${ssm:/db_password}
     EMAIL_ADDRESS: ${ssm:/email~true}
     SQS_URL: !Ref ProductsSqsQueue
+    SNS_TOPIC_ARN: !Ref ProductsSnsTopic
   iam:
     role:
       statements:
@@ -71,7 +72,7 @@ functions:
     description: Writes uploaded files into database table
     events:
       - sqs:
-          batchSize: 1
+          batchSize: 5
           arn: !GetAtt ProductsSqsQueue.Arn
 
 resources:
