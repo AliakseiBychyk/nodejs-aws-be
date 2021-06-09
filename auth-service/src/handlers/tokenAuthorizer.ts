@@ -1,7 +1,8 @@
 import 'source-map-support/register';
-import { ProxyHandler } from 'aws-lambda';
+import { APIGatewayAuthorizerEvent, Context, Callback, APIGatewayAuthorizerHandler } from 'aws-lambda';
+import AuthService from ',/auth.service';
 
-export const tokenAuthorizer: ProxyHandler = async (event, ctx, cb) => {
+export const tokenAuthorizer: APIGatewayAuthorizerHandler = async (event: APIGatewayAuthorizerEvent, ctx: Context, cb: Callback) => {
   console.log('tokenAuthorizer lambda invocation with event:', event);
 
   if (event['type'] !== 'TOKEN') cb('Unauthorized');
@@ -16,8 +17,13 @@ export const tokenAuthorizer: ProxyHandler = async (event, ctx, cb) => {
     const username = plainCreds[0];
     const password = plainCreds[1];
 
-  } catch(e) {
+    console.log(`username: ${username} and password: ${password}`);
 
+    const storedUserPassword = process.env[username]
+    
+    cb(null, policy)
+  } catch(e) {
+    cb(`Unauthorized: ${e.message}`);
   }
 
   return {
