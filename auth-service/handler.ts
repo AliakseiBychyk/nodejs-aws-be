@@ -1,6 +1,5 @@
 import 'source-map-support/register';
 
-import { tokenAuthorizer } from './src/handlers/tokenAuthorizer';
-import { requestAuthorizer } from './src/handlers/requestAuthorizer';
+import { basicAuthorizer } from './src/handlers/basicAuthorizer';
 
-export { tokenAuthorizer, requestAuthorizer };
+export { basicAuthorizer };

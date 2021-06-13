@@ -18,35 +18,9 @@ provider:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
   environment:
-    PASSWORD: ${ssm:}
+    AliakseiBychyk: ${ssm:/auth-password~true}
 
 functions:
-  tokenAuth:
-    handler: handler.tokenAuthorizer
-    description: Authentication with token
-    events:
-      - http:
-          method: GET
-          path: token
-          cors: true
-          authorizer:
-            name: tokenAuthorizer
-            arn:
-            resultTltInSeconds: 0
-            identitySource: method.request.header.Authorization
-            type: token
 
-  requestAuth:
-    handler: handler.requestAuthorizer
-    description: Authentication with request
-    events:
-      - http:
-          method: GET
-          path: request
-          cors: true
-          authorizer:
-            name: requestAuthorizer
-            arn:
-            resultTltInSeconds: 0
-            identitySource: method.request.queryString.token
-            type: request
+  basicAuthorizer:
+    handler: handler.basicAuthorizer
