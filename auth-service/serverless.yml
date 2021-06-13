@@ -22,5 +22,12 @@ provider:
 
 functions:
 
-  basicAuthorizer:
+  BasicAuthorizer:
     handler: handler.basicAuthorizer
+
+resources:
+  Outputs:
+    BasicAuthorizerQualifiedArn:
+      Description: Basic Token Authorizer
+      Export:
+        Name: BasicAuthorizerArn

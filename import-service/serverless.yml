@@ -58,6 +58,12 @@ functions:
           method: GET
           path: /import
           cors: true
+          authorizer:
+            name: requestAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
+            arn: !ImportValue BasicAuthorizerArn
 
   importFileParser:
     handler: handler.importFileParser
