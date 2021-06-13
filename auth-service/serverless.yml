@@ -27,7 +27,7 @@ functions:
 
 resources:
   Outputs:
-    BasicAuthorizerQualifiedArn:
+    BasicAuthorizerLambdaFunctionQualifiedArn:
       Description: Basic Token Authorizer
       Export:
         Name: BasicAuthorizerArn
