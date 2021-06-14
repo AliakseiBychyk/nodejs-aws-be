@@ -4,6 +4,7 @@ app: aleks-rs-app-app
 org: aleksbyczyk
 
 frameworkVersion: '2'
+variablesResolutionMode: 20210326
 
 provider:
   name: aws
@@ -109,19 +110,15 @@ resources:
               Principal:
                 AWS: '*'
 
-    ## Rest API
-    RestApi:
-      Type: AWS::ApiGateway::RestApi
-      Properties:
-        Name: ApiGatewayRestApi
-
+ 
     ## Gateway Response
-    GatewayResponse:
+    GatewayResponseDefault4xx:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
         ResponseType: DEFAULT_4XX
         RestApiId: !Ref ApiGatewayRestApi
 

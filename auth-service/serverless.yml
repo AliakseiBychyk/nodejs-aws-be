@@ -4,6 +4,7 @@ app: aleks-rs-app-app
 org: aleksbyczyk
 
 frameworkVersion: '2'
+variablesResolutionMode: 20210326
 
 provider:
   name: aws
@@ -18,16 +19,16 @@ provider:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
   environment:
-    AliakseiBychyk: ${ssm:/auth-password~true}
+    AliakseiBychyk: ${ssm:/auth-password}
 
 functions:
-
   BasicAuthorizer:
     handler: handler.basicAuthorizer
+    description: Basic Token Authorizer
 
 resources:
   Outputs:
     BasicAuthorizerLambdaFunctionQualifiedArn:
-      Description: Basic Token Authorizer
+      Description: Basic Token Authorizer Arn
       Export:
         Name: BasicAuthorizerArn
