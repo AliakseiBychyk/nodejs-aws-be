@@ -109,6 +109,22 @@ resources:
               Principal:
                 AWS: '*'
 
+    ## Rest API
+    RestApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: ApiGatewayRestApi
+
+    ## Gateway Response
+    GatewayResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId: !Ref ApiGatewayRestApi
+
   Outputs:
     ProductsS3BucketOutput:
       Description: S3 bucket for products
