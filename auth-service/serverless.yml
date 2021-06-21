@@ -27,7 +27,56 @@ functions:
     description: Basic Token Authorizer
 
 resources:
+  Resource:
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        MfaConfiguration: OFF
+        UserPoolName: cognitouserpool
+        UsernameAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: false
+            RequireNumbers: false
+            RequireSymbols: false
+            RequireUppercase: false
+    
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: aleks-rs-app
+        GenerateSecret: false
+        UserPoolId: !Ref CognitoUserPool  
+    
+    ApiGatewayAuthorizer:
+      DependsOn:
+        - ApiGatewayRestApi
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: cognito-authorizer
+        IedentitySource: method.request.header.Authorization
+        RestApiId: !Ref ApiGatewayRestApi
+        Type: COGNITO_USER_POOLS
+        ProviderARNs: 
+          - !GetAtt CognitoUserPool.Arn
+
   Outputs:
+    CognitoUserPool:
+      Description: User Pool
+      Value: !Ref CognitoUserPool
+    
+      CognitoUserPoolArn:
+      Description: User Pool Arn
+      Value: !GetAtt CognitoUserPool.Arn
+
+    ApiGatewayAuthorizer:
+      Description: API Gateway Authorizer
+      Value: !Ref ApiGatewayAuthorizer
+      Export:
+        Name: CognitoAuthorizer
+
     BasicAuthorizerLambdaFunctionQualifiedArn:
       Description: Basic Token Authorizer Arn
       Export:

@@ -23,6 +23,8 @@ export const basicAuthorizer: APIGatewayAuthorizerHandler = async (
     const buff = Buffer.from(encodedCreds, 'base64');
     const plainCreds = buff.toString('utf-8').split(':');
 
+    console.log('encodedCreds:', encodedCreds, '\nplainCreds:', plainCreds)
+
     const username = plainCreds[0];
     const password = plainCreds[1];
 
@@ -40,7 +42,7 @@ export const basicAuthorizer: APIGatewayAuthorizerHandler = async (
   }
 };
 
-const generatePolicy = (principalId: string, resource: string, effect = 'Allow'): APIGatewayAuthorizerResult => {
+function generatePolicy (principalId: string, Resource: string, Effect = 'Allow'): APIGatewayAuthorizerResult {
   return {
     principalId,
     policyDocument: {
@@ -48,8 +50,8 @@ const generatePolicy = (principalId: string, resource: string, effect = 'Allow')
       Statement: [
         {
           Action: 'execute-api:Invoke',
-          Effect: effect,
-          Resource: resource,
+          Effect,
+          Resource,
         },
       ],
     }
