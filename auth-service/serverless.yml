@@ -67,7 +67,7 @@ resources:
       Description: User Pool
       Value: !Ref CognitoUserPool
     
-      CognitoUserPoolArn:
+    CognitoUserPoolArn:
       Description: User Pool Arn
       Value: !GetAtt CognitoUserPool.Arn
 
