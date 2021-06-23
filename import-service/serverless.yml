@@ -59,15 +59,12 @@ functions:
           method: GET
           path: /import
           cors: true
-          # authorizer:
-          #   name: basicTokenRequestAuthorizer
-          #   type: token
-          #   identitySource: method.request.header.Authorization
-          #   resultTtlInSeconds: 0
-          #   arn: !ImportValue BasicAuthorizerArn
           authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId: !ImportValue CognitoAuthorizer
+            name: basicTokenRequestAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
+            arn: !ImportValue BasicAuthorizerArn
 
   importFileParser:
     handler: handler.importFileParser

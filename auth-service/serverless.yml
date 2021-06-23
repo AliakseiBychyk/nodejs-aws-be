@@ -39,7 +39,7 @@ resources:
           PasswordPolicy:
             MinimumLength: 6
             RequireLowercase: false
-            RequireNumbers: false
+            RequireNumbers: true
             RequireSymbols: false
             RequireUppercase: false
     
