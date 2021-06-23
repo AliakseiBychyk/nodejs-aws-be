@@ -27,7 +27,7 @@ functions:
     description: Basic Token Authorizer
 
 resources:
-  Resource:
+  Resources:
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
