@@ -1,0 +1,83 @@
+service: authentication-service
+
+app: aleks-rs-app-app
+org: aleksbyczyk
+
+frameworkVersion: '2'
+variablesResolutionMode: 20210326
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+  profile: private
+  stage: dev
+  httpApi:
+    cors: true
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AliakseiBychyk: ${ssm:/auth-password}
+
+functions:
+  BasicAuthorizer:
+    handler: handler.basicAuthorizer
+    description: Basic Token Authorizer
+
+resources:
+  Resources:
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        MfaConfiguration: OFF
+        UserPoolName: cognitouserpool
+        UsernameAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: false
+            RequireNumbers: true
+            RequireSymbols: false
+            RequireUppercase: false
+    
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: aleks-rs-app
+        GenerateSecret: false
+        UserPoolId: !Ref CognitoUserPool  
+    
+    ApiGatewayAuthorizer:
+      DependsOn:
+        - ApiGatewayRestApi
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: cognito-authorizer
+        IedentitySource: method.request.header.Authorization
+        RestApiId: !Ref ApiGatewayRestApi
+        Type: COGNITO_USER_POOLS
+        ProviderARNs: 
+          - !GetAtt CognitoUserPool.Arn
+
+  Outputs:
+    CognitoUserPool:
+      Description: User Pool
+      Value: !Ref CognitoUserPool
+    
+    CognitoUserPoolArn:
+      Description: User Pool Arn
+      Value: !GetAtt CognitoUserPool.Arn
+
+    ApiGatewayAuthorizer:
+      Description: API Gateway Authorizer
+      Value: !Ref ApiGatewayAuthorizer
+      Export:
+        Name: CognitoAuthorizer
+
+    BasicAuthorizerLambdaFunctionQualifiedArn:
+      Description: Basic Token Authorizer Arn
+      Export:
+        Name: BasicAuthorizerArn
