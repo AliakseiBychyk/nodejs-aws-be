@@ -1,0 +1,16 @@
+service: product-service
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+  profile: private
+
+functions:
+  product: 
+    handler: handler.product
+    events:
+      - http:
+          path: product
+          method: get 
+          cors: true 
