@@ -1,7 +1,7 @@
 ## Training Project Node.js - AWS
 ### Backend part
 
-# Currently all services unavailable
+# IMPORTANT: Currently all services unavailable !!!
 
 ## Products Service leveredges AWS Lambda to expose API data
 
